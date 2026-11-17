@@ -29,7 +29,6 @@ contract MyBank {
     }
 
     function withdraw(uint256 amount) public {
-
         require(amount > 0, "Amount must be greater than 0");
 
         require(
@@ -45,7 +44,8 @@ contract MyBank {
         // Update balance BEFORE transferring
         _balances[msg.sender] -= amount;
 
-        payable(msg.sender).transfer(amount);
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "ETH transfer failed");
 
         emit Withdrawal(msg.sender, amount);
     }
